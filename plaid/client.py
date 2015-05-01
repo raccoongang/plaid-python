@@ -280,6 +280,23 @@ class Client(object):
         return http_request(url, 'DELETE', data)
 
     @require_access_token
+    def update_user_webhook(self, webhook):
+        """
+        Update User webhook https://plaid.com/docs/#update-user
+
+        """
+        url = urljoin(self.url, self.endpoints['connect'])
+
+        data = {
+            'client_id': self.client_id,
+            'secret': self.secret,
+            'access_token': self.access_token,
+            'options': json.dumps({'webhook': webhook})
+        }
+
+        return http_request(url, 'PATCH', data)
+
+    @require_access_token
     def transactions(self, options=None):
         """
         Fetch a list of transactions, requires `access_token`
@@ -287,6 +304,7 @@ class Client(object):
         `options`   dict
             `last`      str         Collect all transactions since this
                                     transaction ID
+        https://plaid.com/docs/#retrieve-transactions
         """
 
         url = urljoin(self.url, self.endpoints['transactions'])
