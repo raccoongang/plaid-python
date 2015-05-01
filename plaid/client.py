@@ -24,8 +24,6 @@ class Client(object):
     See official documentation at: https://plaid.io/v2/docs
     """
 
-    url = 'https://tartan.plaid.com'  # Base API URL
-
     ACCOUNT_TYPES = (
         ('amex', 'American Express',),
         ('bofa', 'Bank of America',),
@@ -44,6 +42,7 @@ class Client(object):
     endpoints = {
         'connect': '/connect',
         'connect_step': '/connect/step',
+        'transactions': '/connect/get',
         'entity': '/entity',
         'categories': '/category',
         'category': '/category/id/%s',
@@ -56,7 +55,7 @@ class Client(object):
         'upgrade': '/upgrade'
     }
 
-    def __init__(self, client_id, secret, access_token=None):
+    def __init__(self, client_id, secret, access_token=None, url=None):
         """
         `client_id`     str     Your Plaid client ID
         `secret`        str     Your Plaid secret
@@ -65,6 +64,10 @@ class Client(object):
         self.client_id = client_id
         self.secret = secret
         self.access_token = None
+        if url is None:
+            self.url = 'https://tartan.plaid.com'  # Base API URL
+        else:
+            self.url = url
 
         if access_token:
             self.set_access_token(access_token)
@@ -276,7 +279,6 @@ class Client(object):
 
         return http_request(url, 'DELETE', data)
 
-
     @require_access_token
     def transactions(self, options=None):
         """
@@ -286,21 +288,19 @@ class Client(object):
             `last`      str         Collect all transactions since this
                                     transaction ID
         """
-        if options is None:
-            options = {}
-        url = urljoin(self.url, self.endpoints['connect'])
+
+        url = urljoin(self.url, self.endpoints['transactions'])
 
         data = {
             'client_id': self.client_id,
             'secret': self.secret,
             'access_token': self.access_token,
-            'options': json.dumps(options)
         }
 
-        if options:
+        if options is not None and isinstance(options, dict):
             data['options'] = json.dumps(options)
 
-        return http_request(url, 'GET', data)
+        return http_request(url, 'POST', data)
 
     def entity(self, entity_id, options=None):
         """
