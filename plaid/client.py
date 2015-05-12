@@ -27,6 +27,13 @@ class Client(object):
     ACCOUNT_TYPES = (
         ('amex', 'American Express',),
         ('bofa', 'Bank of America',),
+        ('capone360', 'Capital One 360'),
+        ('schwab', 'Charles Schwab'),
+        ('fidelity', 'Fidelity'),
+        ('pnc', 'PNC'),
+        ('svb', 'Silicon Valley Bank'),
+        ('us', 'US Bank'),
+        ('usaa', 'USAA'),
         ('chase', 'Chase',),
         ('citi', 'Citi',),
         ('wells', 'Wells Fargo',),
